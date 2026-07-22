@@ -1,0 +1,96 @@
+{
+  "id": null,
+  "uid": "app-metrics-dashboard",
+  "title": "Flask App Metrics",
+  "tags": ["flask", "app", "metrics"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Total Requests",
+      "id": 1,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (endpoint) (flask_app_requests_total)",
+          "legendFormat": "{{endpoint}}",
+          "intervalFactor": 1
+        }
+      ],
+      "lines": true,
+      "fill": 1,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "xaxis": { "show": true },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "requests",
+          "logBase": 1
+        },
+        {
+          "format": "short"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "P99 Request Latency (s)",
+      "id": 2,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, endpoint) (rate(flask_app_request_latency_seconds_bucket[5m])))",
+          "legendFormat": "{{endpoint}}",
+          "intervalFactor": 1
+        }
+      ],
+      "lines": true,
+      "fill": 1,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "xaxis": { "show": true },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "latency",
+          "logBase": 1
+        },
+        {
+          "format": "short"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "HTTP 5xx Error Rate",
+      "id": 3,
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (endpoint) (rate(flask_app_requests_total{status_code=\"500\"}[5m]))",
+          "legendFormat": "{{endpoint}}",
+          "intervalFactor": 1
+        }
+      ],
+      "lines": true,
+      "fill": 1,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "xaxis": { "show": true },
+      "yaxes": [
+        {
+          "format": "reqps",
+          "label": "req/s",
+          "logBase": 1
+        },
+        {
+          "format": "short"
+        }
+      ]
+    }
+  ]
+}

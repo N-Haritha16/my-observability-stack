@@ -1,0 +1,46 @@
+# kubernetes/grafana/values.yaml
+# For chart: grafana/grafana
+adminUser: admin
+adminPassword: promgrafadmin
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "300m"
+    memory: "512Mi"
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://kube-prometheus-stack-prometheus.observability-demo.svc:9090
+        isDefault: true
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki.observability-demo.svc:3100
+
+persistence:
+  enabled: false # enable + storageClass for real persistence
+
+env:
+  GF_SECURITY_ADMIN_PASSWORD: promgrafadmin
+
+# Simple readiness/liveness
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000

@@ -1,0 +1,52 @@
+# kubernetes/prometheus/values.yaml
+# For chart: prometheus-community/kube-prometheus-stack
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    scrapeInterval: 15s
+    retention: 7d
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector: {}
+    ruleSelector:
+      matchLabels:
+        role: alert-rules
+        app: prometheus
+
+    # Ensure we pick up configmaps with rules
+    additionalScrapeConfigs: []
+
+  service:
+    type: ClusterIP
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "300m"
+        memory: "512Mi"
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+# Optional: namespace override if you install into observability-demo
+# fullnameOverride: prometheus

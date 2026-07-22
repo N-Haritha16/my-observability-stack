@@ -1,0 +1,21 @@
+# kubernetes/alertmanager/values.yaml
+# For chart: prometheus-community/kube-prometheus-stack (embedded alertmanager)
+alertmanager:
+  alertmanagerSpec:
+    externalUrl: ""
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        receiver: "webhook-receiver"
+      receivers:
+        - name: "webhook-receiver"
+          webhook_configs:
+            - url: "http://webhook-receiver.observability-demo.svc:8080/alert"

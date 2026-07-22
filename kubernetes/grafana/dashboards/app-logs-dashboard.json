@@ -1,0 +1,49 @@
+{
+  "id": null,
+  "uid": "app-logs-dashboard",
+  "title": "Flask App Logs",
+  "tags": ["flask", "app", "logs"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "logs",
+      "title": "Application Logs",
+      "id": 1,
+      "datasource": "Loki",
+      "targets": [
+        {
+          "expr": "{app=\"flask-app\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showLabels": true,
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "dedupStrategy": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": "Loki",
+        "query": "label_values(kubernetes_namespace_name)",
+        "refresh": 1
+      }
+    ]
+  }
+}

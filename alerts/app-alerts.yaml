@@ -1,0 +1,27 @@
+# alerts/app-alerts.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-alerts
+  namespace: observability-demo
+  labels:
+    role: alert-rules
+    app: prometheus
+spec:
+  groups:
+    - name: flask-app.rules
+      rules:
+        - alert: HighLatencyAlert
+          expr: |
+            histogram_quantile(
+              0.99,
+              sum by (le, endpoint) (
+                rate(flask_app_request_latency_seconds_bucket{endpoint="/hello"}[1m])
+              )
+            ) > 0.5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High latency on /hello endpoint"
+            description: "P99 latency for /hello exceeded 0.5s for more than 1 minute."
